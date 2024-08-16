@@ -1,13 +1,19 @@
-import requests
+"""
+This module contains functions for emotion detection using an external API
+"""
 import json
+import requests
+
 
 def emotion_detector(text_to_analyze):
+    """Analyze text to detect emotions using an external API"""
     try:
-        url = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
+        url = ('https://sn-watson-emotion.labs.skills.network/'
+        'v1/watson.runtime.nlp.v1/NlpService/EmotionPredict')
         headers = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
         myobj = {"raw_document": {"text": text_to_analyze}}
 
-        response = requests.post(url, headers=headers, json=myobj)
+        response = requests.post(url, headers=headers, json=myobj, timeout=10)
 
         # Converting the response text into a dictionary using the json library functions
         formatted_response = json.loads(response.text)
@@ -28,6 +34,7 @@ def emotion_detector(text_to_analyze):
 
         # Finding the emotion with the highest score
         highest_score = float('-inf')
+        dominant_emotion = None
 
         for emotion, score in emotions.items():
             if score > highest_score:
